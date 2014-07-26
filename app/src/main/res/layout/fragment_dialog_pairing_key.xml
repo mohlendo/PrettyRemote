@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/dialog_bottom_margin"
+    android:paddingLeft="@dimen/dialog_horizontal_margin"
+    android:paddingRight="@dimen/dialog_horizontal_margin"
+    android:paddingTop="@dimen/dialog_top_margin">
+
+    <TextView
+        android:id="@+id/tv_dialog_content"
+        style="@style/DialogContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_pairing_dialog_content" />
+
+    <EditText
+        android:id="@+id/et_pairing_number"
+        android:layout_marginTop="@dimen/dialog_item_top_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_dialog_content"
+        android:hint="@string/pairing_number_hint"
+        android:inputType="number"
+        android:labelFor="@id/et_pairing_number" />
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_marginTop="@dimen/dialog_item_top_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/et_pairing_number"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_cancel"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_cancel" />
+
+        <Button
+            android:id="@+id/button_pair"
+            style="?android:attr/buttonBarButtonStyle"
+            android:textColor="?android:attr/colorAccent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_pair" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

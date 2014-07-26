@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Pretty Remote</string>
+    <string name="device_activity_label">Connect to device</string>
+    <string name="action_refresh">Refresh device llist</string>
+    <string name="button_pair">Pair with device</string>
+    <string name="description_device_icon">Device icon</string>
+    <string name="tv_pairing_number">Pairing number</string>
+    <string name="pairing_number_hint">Pairing Number</string>
+    <string name="title_pairing_dialog">Enter Pairing Key</string>
+    <string name="tv_pairing_dialog_content">Enter the pairing key that is displayed on the TV to pair with the device.</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="title_activity_remote">RemoteActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="tv_no_devices_found">LG TV and this device need to be on the same Wi-Fi network.</string>
+    <string name="button_wifi_settings">Wifi Settings</string>
+    <string name="description_wifi_off_icon">Icon Wifi Off</string>
+
+</resources>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="theme_default_primary_light">#b2dfdb</color>
+    <color name="theme_default_primary">#009688</color>
+    <color name="theme_default_primary_dark">#00796b</color>
+    <color name="theme_default_accent">#607d8b</color>
+    <color name="theme_default_accent_light">#cfd8dc</color>
+    <color name="theme_default_accent_dark">#78909c</color>
+    <color name="theme_background">#f2f2f2</color>
+
+    <declare-styleable name="AppTheme">
+        <attr name="actionBarIconColor" format="color" />
+    </declare-styleable>
+
+    <style name="AppTheme" parent="android:Theme.Material.Light">
+        <item name="android:colorPrimary">@color/theme_default_primary</item>
+        <item name="android:colorPrimaryDark">@color/theme_default_primary_dark</item>
+        <item name="android:colorBackground">@color/theme_background</item>
+        <item name="android:colorAccent">@color/theme_default_accent</item>
+        <item name="android:colorControlHighlight">@color/theme_default_accent_light</item>
+        <item name="android:statusBarColor">@color/theme_default_primary_dark</item>
+        <item name="actionBarIconColor">#fff</item>
+        <item name="android:windowBackground">@color/theme_background</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowExitTransitionOverlap">true</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="android:Widget.Material.Light.ActionBar">
+        <item name="android:background">?android:colorPrimaryDark</item>
+    </style>
+
+    <style name="MainTheme" parent="AppTheme">
+        <item name="android:actionBarTheme">@style/MainActionBarThemeOverlay</item>
+        <item name="android:actionBarStyle">@style/MainActionBar</item>
+        <item name="android:windowActionBarOverlay">false</item>
+    </style>
+
+    <style name="MainActionBar" parent="android:Widget.Material.Light.ActionBar.Solid">
+        <item name="android:titleTextStyle">@style/MainThemeActionBarTitleTextStyle</item>
+    </style>
+
+    <style name="MainActionBarThemeOverlay" parent="">
+        <item name="android:colorControlNormal">?actionBarIconColor</item>
+        <item name="android:colorControlHighlight">@color/theme_default_accent_light</item>
+    </style>
+
+    <style name="MainThemeActionBarTitleTextStyle" parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
+        <item name="android:textColor">#fff</item>
+    </style>
+</resources>
