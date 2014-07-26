@@ -10,13 +10,15 @@
     </style>
 
     <style name="NoWifiText" parent="@android:style/Widget.Material.TextView">
-        <item name="android:textAppearance">@android:style/TextAppearance.Material.Title</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Subhead</item>
         <item name="android:gravity">center</item>
     </style>
 
     <style name="WifiSettingsButton" parent="android:Widget.Material.Light.Button">
         <item name="android:background">?android:attr/colorPrimary</item>
         <item name="android:textColor">#fff</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
     </style>
 
     <style name="Dialog" parent="@android:style/Theme.Material.Light.Dialog.MinWidth"></style>

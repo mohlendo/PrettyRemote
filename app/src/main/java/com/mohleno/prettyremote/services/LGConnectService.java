@@ -60,7 +60,8 @@ public final class LGConnectService {
         Matcher matcher = locationPattern.matcher(result);
 
         if (matcher.find()) {
-            return Collections.singletonList(new Device(matcher.group(1)));
+            //TODO: parse name
+            return Collections.singletonList(new Device(matcher.group(1), "TODO:Unknown"));
         }
 
         return Collections.emptyList();

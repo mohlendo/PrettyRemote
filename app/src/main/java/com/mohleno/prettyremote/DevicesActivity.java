@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,7 +42,7 @@ public class DevicesActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_devices);
-        setTitle(R.string.device_activity_label);
+        setTitle(R.string.title_connect_device);
 
         deviceStorageService = DeviceStorageService.getInstance(this);
         lgConnectService = new LGConnectService();
@@ -51,7 +52,7 @@ public class DevicesActivity extends Activity {
         findViewById(R.id.button_wifi_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
             }
         });
 
@@ -180,10 +181,10 @@ public class DevicesActivity extends Activity {
             @Override
             protected void onPostExecute(List<Device> scannedDevices) {
                 //TODO: just for offline Tests:
-                scannedDevices = new ArrayList<Device>();
+                /*scannedDevices = new ArrayList<Device>();
                 scannedDevices.add(new Device("1.2.3.2", "Glotze 1"));
                 scannedDevices.add(new Device("1.2.3.3", "Glotze 2"));
-                scannedDevices.add(new Device("1.2.3.4", "Glotze 3"));
+                scannedDevices.add(new Device("1.2.3.4", "Glotze 3"));*/
 
                 // merge the scanned devices with the current list
                 for (Device scannedDevice : scannedDevices) {
@@ -215,8 +216,10 @@ public class DevicesActivity extends Activity {
                 // show/hide error view, depending on the state
                 if (devices.isEmpty()) {
                     noDeviceFoundView.setVisibility(View.VISIBLE);
+                    setTitle(R.string.title_no_devices_found);
                 } else {
                     noDeviceFoundView.setVisibility(View.GONE);
+                    setTitle(R.string.title_connect_device);
                 }
             }
         }.execute();

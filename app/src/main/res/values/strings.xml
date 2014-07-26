@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Pretty Remote</string>
-    <string name="device_activity_label">Connect to device</string>
+    <string name="title_connect_device">Connect to device</string>
     <string name="action_refresh">Refresh device llist</string>
     <string name="button_pair">Pair with device</string>
     <string name="description_device_icon">Device icon</string>
@@ -17,5 +17,6 @@
     <string name="tv_no_devices_found">LG TV and this device need to be on the same Wi-Fi network.</string>
     <string name="button_wifi_settings">Wifi Settings</string>
     <string name="description_wifi_off_icon">Icon Wifi Off</string>
+    <string name="title_no_devices_found">No devices found</string>
 
 </resources>
