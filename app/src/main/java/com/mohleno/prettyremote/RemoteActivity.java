@@ -39,6 +39,20 @@ public class RemoteActivity extends Activity {
                 sendCommand(LGCommand.MUTE);
             }
         });
+
+        findViewById(R.id.button_up).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendCommand(LGCommand.CHANNEL_UP);
+            }
+        });
+
+        findViewById(R.id.button_down).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendCommand(LGCommand.CHANNEL_DOWN);
+            }
+        });
     }
 
     private void sendCommand(LGCommand command) {

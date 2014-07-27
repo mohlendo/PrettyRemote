@@ -4,11 +4,30 @@
     android:layout_height="match_parent"
     tools:context="com.mohleno.prettyremote.RemoteActivity">
 
-    <Button
-        android:id="@+id/button_mute"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Mute"/>
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Up" />
+
+        <Button
+            android:id="@+id/button_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Down" />
+
+        <Button
+            android:id="@+id/button_mute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mute" />
+    </LinearLayout>
+
 
 </FrameLayout>
