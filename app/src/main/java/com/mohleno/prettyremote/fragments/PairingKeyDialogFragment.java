@@ -1,8 +1,8 @@
 package com.mohleno.prettyremote.fragments;
 
-import android.app.ActivityOptions;
+import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,16 +10,25 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.mohleno.prettyremote.R;
-import com.mohleno.prettyremote.RemoteActivity;
 import com.mohleno.prettyremote.services.Device;
+import com.mohleno.prettyremote.services.DeviceStorageService;
+import com.mohleno.prettyremote.services.LGConnectService;
 
 /**
  * Created by moh on 25.07.14.
  */
 public class PairingKeyDialogFragment extends DialogFragment {
-
+    private static final String TAG = PairingKeyDialogFragment.class.getSimpleName();
     private EditText pairingKeyEditText;
     private Device device;
+    private LGConnectService lgConnectService;
+    private DeviceStorageService deviceStorageService;
+    private OnPairingKeyEnteredListener listener;
+    private AsyncTask pairingTask;
+
+    public interface OnPairingKeyEnteredListener {
+        void onPairingKeyEntered(Device device, String pairingKey);
+    }
 
     public static PairingKeyDialogFragment newInstance(Device device) {
         PairingKeyDialogFragment fragment = new PairingKeyDialogFragment();
@@ -35,6 +44,18 @@ public class PairingKeyDialogFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         device = (Device) getArguments().getSerializable("device");
+        lgConnectService = LGConnectService.getInstance(getActivity());
+        deviceStorageService = DeviceStorageService.getInstance(getActivity());
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            listener = (OnPairingKeyEnteredListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnPairingKeyEnteredListener");
+        }
     }
 
     @Override
@@ -49,10 +70,8 @@ public class PairingKeyDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 String pairingKey = pairingKeyEditText.getText().toString();
+                listener.onPairingKeyEntered(device, pairingKey);
                 dismiss();
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), RemoteActivity.class);
-                startActivity(intent);
             }
         });
         v.findViewById(R.id.button_cancel).setOnClickListener(new View.OnClickListener() {

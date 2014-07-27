@@ -1,17 +1,15 @@
 package com.mohleno.prettyremote.services;
 
+import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.DatagramPacket;
@@ -20,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,6 +29,7 @@ import java.util.regex.Pattern;
  */
 public final class LGConnectService {
 
+    private static final String TAG = LGConnectService.class.getSimpleName();
     private static final String UDP_HOST = "239.255.255.250";
     private static final int UDP_PORT = 1900;
     private static final String DISCOVER_XMIT = "M-SEARCH * HTTP/1.1" + "\r\n" +
@@ -39,6 +39,30 @@ public final class LGConnectService {
             "ST: urn:schemas-upnp-org:device:MediaRenderer:1" + "\r\n" + "\r\n";
 
     private static final String AUTH_URL = "http://%s:8080/roap/api/auth";
+    private static final String COMMAND_URL = "http://%s:8080/udap/api/command";
+
+    private final Pattern locationPattern = Pattern.compile("http://([0-9\\.]+)");
+    private final Pattern deviceNamePattern = Pattern.compile("DLNADeviceName.lge.com: (.+)");
+
+    private static LGConnectService instance;
+
+
+    private LGConnectService(Context context) {
+    }
+
+    public static LGConnectService getInstance(Context context) {
+        LGConnectService r = instance;
+        if (r == null) {
+            synchronized (LGConnectService.class) { // while we were waiting for the lock, another
+                r = instance; // thread may have instantiated instance
+                if (r == null) {
+                    r = new LGConnectService(context);
+                    instance = r;
+                }
+            }
+        }
+        return r;
+    }
 
     public List<Device> scanForDevices() throws IOException {
         InetAddress group = InetAddress.getByName(UDP_HOST);
@@ -55,13 +79,23 @@ public final class LGConnectService {
         DatagramPacket responsePacket = new DatagramPacket(buf, buf.length, group, UDP_PORT);
         socket.receive(responsePacket);
         String out = new String(responsePacket.getData());
+
         String result = out.substring(0, responsePacket.getLength());
-        Pattern locationPattern = Pattern.compile("http://([0-9\\.]+)");
+        Log.i(TAG, "Device: \n" + result);
         Matcher matcher = locationPattern.matcher(result);
 
+        String ip = null, deviceName = null;
         if (matcher.find()) {
-            //TODO: parse name
-            return Collections.singletonList(new Device(matcher.group(1), "TODO:Unknown"));
+            ip = matcher.group(1);
+        }
+
+        matcher = deviceNamePattern.matcher(result);
+        if (matcher.find()) {
+            deviceName = URLDecoder.decode(matcher.group(1), "UTF-8");
+        }
+
+        if (ip != null && deviceName != null) {
+            return Collections.singletonList(new Device(ip, deviceName));
         }
 
         return Collections.emptyList();
@@ -92,7 +126,7 @@ public final class LGConnectService {
 
         connection.connect();
 
-        return connection.getResponseCode() != HttpURLConnection.HTTP_OK;
+        return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
     }
 
     public String pair(Device device, String pairingKey) throws IOException, XmlPullParserException {
@@ -101,7 +135,8 @@ public final class LGConnectService {
             uri = new URL(String.format(AUTH_URL, device.getIP()));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
-        }        HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
+        }
+        HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
         connection.setRequestProperty("Content-Type", "application/atom+xml");
         connection.setDoInput(true);
         connection.setDoOutput(true);
@@ -124,6 +159,40 @@ public final class LGConnectService {
         }
 
         return parseSessionKey(connection.getInputStream());
+    }
+
+    public boolean sendCommand(Device device, LGCommand command) throws IOException {
+        URL uri;
+        try {
+            uri = new URL(String.format(COMMAND_URL, device.getIP()));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
+        connection.setRequestProperty("Content-Type", "application/atom+xml");
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+
+        connection.setRequestMethod("POST");
+        String data = "<?xml version=\"1.0\" encoding=\"utf-8\"?><command>"
+                + "<name>HandleKeyInput</name><value>"
+                + command.code()
+                + "</value></command>";
+
+        OutputStream os = connection.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(os, "UTF-8"));
+        writer.write(data);
+        writer.flush();
+        writer.close();
+        os.close();
+
+        connection.connect();
+
+        int responseCode = connection.getResponseCode();
+        Log.i(TAG, "Response: " + responseCode + " " + connection.getResponseMessage());
+
+        return responseCode == HttpURLConnection.HTTP_OK;
     }
 
     public String parseSessionKey(InputStream xmlInputStream) throws XmlPullParserException, IOException {

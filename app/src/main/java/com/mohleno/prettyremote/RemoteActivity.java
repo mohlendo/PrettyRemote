@@ -1,9 +1,17 @@
 package com.mohleno.prettyremote;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Toast;
+
+import com.mohleno.prettyremote.services.Device;
+import com.mohleno.prettyremote.services.LGCommand;
+import com.mohleno.prettyremote.services.LGConnectService;
+
+import java.io.IOException;
 
 
 /**
@@ -12,11 +20,46 @@ import android.view.View;
  */
 public class RemoteActivity extends Activity {
 
+    private Device device;
+    private LGConnectService lgConnectService;
+
+    public static final String DEVICE_INTENT_KEY = "device";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_remote);
+
+        device = (Device) getIntent().getSerializableExtra(DEVICE_INTENT_KEY);
+        lgConnectService = LGConnectService.getInstance(this);
+
+        findViewById(R.id.button_mute).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendCommand(LGCommand.MUTE);
+            }
+        });
+    }
+
+    private void sendCommand(LGCommand command) {
+        new AsyncTask<LGCommand, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(LGCommand... lgCommands) {
+                try {
+                    return lgConnectService.sendCommand(device, lgCommands[0]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                if (!result) {
+                    Toast.makeText(getApplicationContext(), R.string.toast_command_error, Toast.LENGTH_LONG).show();
+                }
+            }
+        }.execute(command);
     }
 
     @Override

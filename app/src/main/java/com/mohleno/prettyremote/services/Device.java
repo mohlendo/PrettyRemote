@@ -9,7 +9,7 @@ public class Device implements Serializable {
 
     private String name;
     private String IP;
-    private String session;
+    private String pairingKey;
 
     public Device(String IP) {
         this(IP, null);
@@ -36,12 +36,12 @@ public class Device implements Serializable {
         this.name = name;
     }
 
-    public String getSession() {
-        return session;
+    public String getPairingKey() {
+        return pairingKey;
     }
 
-    public void setSession(String session) {
-        this.session = session;
+    public void setPairingKey(String pairingKey) {
+        this.pairingKey = pairingKey;
     }
 
     @Override

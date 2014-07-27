@@ -18,5 +18,7 @@
     <string name="button_wifi_settings">Wifi Settings</string>
     <string name="description_wifi_off_icon">Icon Wifi Off</string>
     <string name="title_no_devices_found">No devices found</string>
+    <string name="toast_cannot_connect">Cannot connect to selected device.</string>
+    <string name="toast_command_error">Command was rejected by device.</string>
 
 </resources>

@@ -39,6 +39,17 @@ public class DeviceStorageService {
         return r;
     }
 
+    public void update(Device device) {
+        List<Device> devices = load();
+        int i = devices.indexOf(device);
+        if (i != -1) {
+            Device oldDevice = devices.get(i);
+            oldDevice.setName(device.getName());
+            oldDevice.setPairingKey(device.getPairingKey());
+        }
+        save(devices);
+    }
+
     public void save(List<Device> deviceList) {
         SharedPreferences.Editor editor = context.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE).edit();
         editor.putString(DEVICE_LIST_KEY, new Gson().toJson(deviceList));

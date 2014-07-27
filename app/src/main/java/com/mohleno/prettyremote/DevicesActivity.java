@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mohleno.prettyremote.fragments.PairingKeyDialogFragment;
 import com.mohleno.prettyremote.services.Device;
@@ -27,7 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class DevicesActivity extends Activity {
+public class DevicesActivity extends Activity implements PairingKeyDialogFragment.OnPairingKeyEnteredListener{
     private static final String TAG = DevicesActivity.class.getSimpleName();
 
     private RecyclerView recyclerView;
@@ -36,7 +38,7 @@ public class DevicesActivity extends Activity {
 
     private DeviceStorageService deviceStorageService;
     private LGConnectService lgConnectService;
-    private AsyncTask deviceScanTask;
+    private AsyncTask deviceScanTask, authRequestTask, pairingTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,7 @@ public class DevicesActivity extends Activity {
         setTitle(R.string.title_connect_device);
 
         deviceStorageService = DeviceStorageService.getInstance(this);
-        lgConnectService = new LGConnectService();
+        lgConnectService = LGConnectService.getInstance(this);
 
         noDeviceFoundView = findViewById(R.id.vg_no_devices_found);
         noDeviceFoundView.setVisibility(View.GONE);
@@ -64,7 +66,7 @@ public class DevicesActivity extends Activity {
             @Override
             public void onClick(View view) {
                 int itemPosition = recyclerView.getChildPosition(view);
-                openPairingKeyDialog(devices.get(itemPosition));
+                connectToDevice(devices.get(itemPosition));
             }
         }));
     }
@@ -72,12 +74,18 @@ public class DevicesActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        devices.clear();
         devices.addAll(deviceStorageService.load());
         if (!devices.isEmpty()) {
             recyclerView.getAdapter().notifyDataSetChanged();
         } else {
             scanForDevices();
         }
+    }
+
+    @Override
+    public void onPairingKeyEntered(Device device, String pairingKey) {
+        pairWithDevice(device, pairingKey);
     }
 
     private static class DeviceListAdapter extends RecyclerView.Adapter {
@@ -149,9 +157,100 @@ public class DevicesActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Connects to the given device. Either requests pairing key or, if key is present, just connects
+     * @param device the device to connect with
+     */
+    private void connectToDevice(Device device) {
+        if (TextUtils.isEmpty(device.getPairingKey())) {
+            requestPairingKey(device);
+        } else {
+            pairWithDevice(device, device.getPairingKey());
+        }
+    }
+
+    /**
+     * Open the remote control to the given device
+     * @param device the device to open
+     */
+    private void openDevice(Device device) {
+        Intent intent = new Intent();
+        intent.putExtra(RemoteActivity.DEVICE_INTENT_KEY, device);
+        intent.setClass(this, RemoteActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Open the pairing dialog for the given device
+     * @param device the device to pair with
+     */
     private void openPairingKeyDialog(Device device) {
         PairingKeyDialogFragment fragment = PairingKeyDialogFragment.newInstance(device);
         fragment.show(getFragmentManager(), "PAIRING_KEY_DIALOG");
+    }
+
+
+    private boolean isPairingWithDevice() {
+        return pairingTask != null && pairingTask.getStatus() != AsyncTask.Status.FINISHED && !pairingTask.isCancelled();
+    }
+
+    private void pairWithDevice(final Device device, final String pairingKey) {
+        if (isPairingWithDevice()) {
+            return;
+        }
+        pairingTask = new AsyncTask<String, Void, String>() {
+            @Override
+            protected String doInBackground(String... keys) {
+                try {
+                    return lgConnectService.pair(device, keys[0]);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error pairing:", e);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String session) {
+                if (session != null) {
+                    device.setPairingKey(pairingKey);
+                    deviceStorageService.update(device);
+                    openDevice(device);
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.toast_cannot_connect, Toast.LENGTH_LONG).show();
+                }
+            }
+        }.execute(pairingKey);
+
+    }
+
+
+    private boolean isRequestingPairingKey() {
+        return authRequestTask != null && authRequestTask.getStatus() != AsyncTask.Status.FINISHED && !authRequestTask.isCancelled();
+    }
+
+    private void requestPairingKey(final Device device) {
+        if (isRequestingPairingKey()) {
+            return;
+        }
+
+        authRequestTask = new AsyncTask<Device, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Device... devices) {
+                try {
+                    return lgConnectService.requestAuthKey(devices[0]);
+                } catch (IOException e) {
+                    Log.e(TAG, "Error", e);
+                }
+                return false;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                if(result) {
+                    openPairingKeyDialog(device);
+                }
+            }
+        }.execute(device);
     }
 
     private boolean isScanningForDevices() {
