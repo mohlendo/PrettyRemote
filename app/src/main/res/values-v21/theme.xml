@@ -36,6 +36,20 @@
         <item name="android:background">?android:colorPrimaryDark</item>
     </style>
 
+    <style name="DialogTheme" parent="@android:style/Theme.Material.Light.Dialog.MinWidth">
+        <item name="android:colorPrimary">@color/theme_default_primary</item>
+        <item name="android:colorPrimaryDark">@color/theme_default_primary_dark</item>
+        <item name="android:colorBackground">@color/theme_background</item>
+        <item name="android:colorAccent">@color/theme_default_accent</item>
+        <item name="android:colorControlHighlight">@color/theme_default_accent_light</item>
+        <item name="android:statusBarColor">@color/theme_default_primary_dark</item>
+        <item name="android:windowBackground">@color/theme_background</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowExitTransitionOverlap">true</item>
+    </style>
+
+
     <style name="MainTheme" parent="AppTheme">
         <item name="android:actionBarTheme">@style/MainActionBarThemeOverlay</item>
         <item name="android:actionBarStyle">@style/MainActionBar</item>

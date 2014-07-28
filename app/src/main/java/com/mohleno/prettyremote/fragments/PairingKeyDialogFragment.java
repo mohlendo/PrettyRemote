@@ -32,7 +32,7 @@ public class PairingKeyDialogFragment extends DialogFragment {
 
     public static PairingKeyDialogFragment newInstance(Device device) {
         PairingKeyDialogFragment fragment = new PairingKeyDialogFragment();
-        fragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.Dialog);
+        fragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
         Bundle bundle = new Bundle();
         bundle.putSerializable("device", device);
         fragment.setArguments(bundle);

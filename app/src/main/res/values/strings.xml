@@ -20,5 +20,6 @@
     <string name="title_no_devices_found">No devices found</string>
     <string name="toast_cannot_connect">Cannot connect to selected device.</string>
     <string name="toast_command_error">Command was rejected by device.</string>
+    <string name="toast_cannot_request_pairing_key">Cannot request pairing key. Is the TV online?</string>
 
 </resources>

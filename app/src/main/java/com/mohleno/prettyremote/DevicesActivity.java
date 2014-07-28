@@ -237,7 +237,7 @@ public class DevicesActivity extends Activity implements PairingKeyDialogFragmen
             @Override
             protected Boolean doInBackground(Device... devices) {
                 try {
-                    return lgConnectService.requestAuthKey(devices[0]);
+                    return lgConnectService.requestPairingKey(devices[0]);
                 } catch (IOException e) {
                     Log.e(TAG, "Error", e);
                 }
@@ -248,6 +248,8 @@ public class DevicesActivity extends Activity implements PairingKeyDialogFragmen
             protected void onPostExecute(Boolean result) {
                 if(result) {
                     openPairingKeyDialog(device);
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.toast_cannot_request_pairing_key, Toast.LENGTH_SHORT).show();
                 }
             }
         }.execute(device);

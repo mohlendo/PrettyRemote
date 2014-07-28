@@ -101,7 +101,7 @@ public final class LGConnectService {
         return Collections.emptyList();
     }
 
-    public boolean requestAuthKey(Device device) throws IOException {
+    public boolean requestPairingKey(Device device) throws IOException {
         URL uri;
         try {
             uri = new URL(String.format(AUTH_URL, device.getIP()));
