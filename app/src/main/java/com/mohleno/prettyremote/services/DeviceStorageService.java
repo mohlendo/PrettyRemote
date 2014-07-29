@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -56,6 +57,34 @@ public class DeviceStorageService {
         editor.apply();
     }
 
+    public List<Device> merge(List<Device> newDevices) {
+        List<Device> devices = load();
+        // merge the scanned devices with the current list
+        for (Device scannedDevice : newDevices) {
+            int index = devices.indexOf(scannedDevice);
+            if (index != -1) {
+                // update the already existing device
+                Device device = devices.get(index);
+                device.setName(scannedDevice.getName());
+            } else {
+                // add the new device
+                devices.add(scannedDevice);
+            }
+        }
+
+        // re-sort it
+        Collections.sort(devices, new Comparator<Device>() {
+            @Override
+            public int compare(Device device1, Device device2) {
+                return device1.getName().compareTo(device2.getName());
+            }
+        });
+
+        // and finally save it
+        save(devices);
+        return devices;
+    }
+
     public List<Device> load() {
         Type listType = new TypeToken<ArrayList<Device>>() {
         }.getType();
@@ -64,7 +93,7 @@ public class DeviceStorageService {
             sharedPreferences.getString(DEVICE_LIST_KEY, "");
             return new Gson().fromJson(sharedPreferences.getString(DEVICE_LIST_KEY, ""), listType);
         } else {
-            return Collections.emptyList();
+            return new ArrayList<Device>();
         }
     }
 }

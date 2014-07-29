@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="touch_area_height">120dp</dimen>
+
+</resources>

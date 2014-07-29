@@ -1,33 +1,82 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.mohleno.prettyremote.RemoteActivity">
+
+
+    <Button
+        android:id="@+id/button_touch_area"
+        style="@style/RemoteTouchArea"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_up"
+        <ImageButton
+            android:id="@+id/button_channel_up"
+            style="@style/RemoteIconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Up" />
+            android:src="@drawable/ic_up" />
 
-        <Button
-            android:id="@+id/button_down"
-            android:layout_width="wrap_content"
+        <TextView
+            style="@style/RemoteCaption"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Down" />
+            android:text="@string/tv_channel" />
 
-        <Button
-            android:id="@+id/button_mute"
+        <ImageButton
+            android:id="@+id/button_channel_down"
+            style="@style/RemoteIconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mute" />
+            android:src="@drawable/ic_down" />
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/button_mute"
+        style="@style/RemoteIconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_volume_off" />
 
-</FrameLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/button_volume_up"
+            style="@style/RemoteIconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_volume_up" />
+
+        <TextView
+            style="@style/RemoteCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_volume" />
+
+        <ImageButton
+            android:id="@+id/button_volume_down"
+            style="@style/RemoteIconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_volume_down" />
+    </LinearLayout>
+</RelativeLayout>

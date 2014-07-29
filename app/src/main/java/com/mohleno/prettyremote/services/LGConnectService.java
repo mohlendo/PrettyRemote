@@ -1,6 +1,7 @@
 package com.mohleno.prettyremote.services;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.util.Log;
 import android.util.Xml;
 
@@ -161,7 +162,30 @@ public final class LGConnectService {
         return parseSessionKey(connection.getInputStream());
     }
 
-    public boolean sendCommand(Device device, LGCommand command) throws IOException {
+    public boolean sendKeyInput(Device device, LGKey command) throws IOException {
+        return sendCommand(device, "<?xml version=\"1.0\" encoding=\"utf-8\"?><command>"
+                + "<name>HandleKeyInput</name><value>"
+                + command.code()
+                + "</value></command>");
+    }
+
+    public boolean sendTouchMove(Device device, Point point) throws IOException {
+        return sendCommand(device, "<?xml version=\"1.0\" encoding=\"utf-8\"?><command>"
+                + "<name>HandleTouchMove</name><value>"
+                + "<x>" + point.x + "</x>"
+                + "<y>" + point.y + "</y>"
+                + "</value></command>");
+    }
+
+    public boolean sendTouchClick(Device device) throws IOException {
+        return sendCommand(device, "<?xml version=\"1.0\" encoding=\"utf-8\"?><command>"
+                + "<name>HandleTouchClick</name><value>"
+                + "</value></command>");
+    }
+
+
+
+    private boolean sendCommand(Device device, String xml) throws IOException {
         URL uri;
         try {
             uri = new URL(String.format(COMMAND_URL, device.getIP()));
@@ -174,15 +198,11 @@ public final class LGConnectService {
         connection.setDoOutput(true);
 
         connection.setRequestMethod("POST");
-        String data = "<?xml version=\"1.0\" encoding=\"utf-8\"?><command>"
-                + "<name>HandleKeyInput</name><value>"
-                + command.code()
-                + "</value></command>";
 
         OutputStream os = connection.getOutputStream();
         BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(os, "UTF-8"));
-        writer.write(data);
+        writer.write(xml);
         writer.flush();
         writer.close();
         os.close();
@@ -190,8 +210,6 @@ public final class LGConnectService {
         connection.connect();
 
         int responseCode = connection.getResponseCode();
-        Log.i(TAG, "Response: " + responseCode + " " + connection.getResponseMessage());
-
         return responseCode == HttpURLConnection.HTTP_OK;
     }
 

@@ -9,12 +9,22 @@
         <item name="android:textAppearance">@android:style/TextAppearance.Material.Caption</item>
     </style>
 
+    <style name="DeviceScanText" parent="@android:style/Widget.Material.TextView">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Title</item>
+    </style>
+
+    <style name="DeviceScanProgressBar" parent="@android:style/Widget.Material.ProgressBar.Horizontal">
+
+    </style>
+
     <style name="NoWifiText" parent="@android:style/Widget.Material.TextView">
         <item name="android:textAppearance">@android:style/TextAppearance.Material.Subhead</item>
         <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
     <style name="WifiSettingsButton" parent="android:Widget.Material.Light.Button">
+        <item name="android:elevation">2dp</item>
         <item name="android:background">?android:attr/colorPrimary</item>
         <item name="android:textColor">#fff</item>
         <item name="android:paddingStart">16dp</item>
@@ -30,10 +40,45 @@
     <style name="DeviceListItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">16dp</item>
-        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:padding">@dimen/item_margin</item>
+        <item name="android:layout_marginBottom">@dimen/item_margin</item>
+        <item name="android:layout_marginTop">@dimen/item_margin</item>
+        <item name="android:layout_marginStart">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/activity_horizontal_margin</item>
 
         <item name="android:elevation">4dp</item>
         <item name="android:background">@drawable/device_list_item_ripple</item>
     </style>
+
+    <style name="NoDevicesFound">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginLeft">32dp</item>
+        <item name="android:layout_marginRight">32dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="RemoteIconButton" parent="android:Widget.Material.ImageButton">
+        <item name="android:padding">16dp</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <style name="RemoteCaption" parent="@android:style/Widget.Material.TextView">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Caption</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_marginTop">@dimen/item_margin</item>
+        <item name="android:layout_marginBottom">@dimen/item_margin</item>
+    </style>
+
+    <style name="RemoteTouchArea" parent="android:Widget.Material.Button">
+        <item name="android:elevation">2dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/touch_area_height</item>
+        <item name="android:background">@drawable/touch_area_ripple</item>
+        <item name="android:text">@string/tv_touch_area</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Caption</item>
+    </style>
+
 </resources>

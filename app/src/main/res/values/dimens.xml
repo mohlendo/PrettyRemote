@@ -6,6 +6,7 @@
     <dimen name="dialog_bottom_margin">16dp</dimen>
     <dimen name="dialog_horizontal_margin">16dp</dimen>
     <dimen name="dialog_item_top_margin">24dp</dimen>
-    <dimen name="item_margin">8dp</dimen>
+    <dimen name="item_margin">16dp</dimen>
     <dimen name="card_corner_radius">6dp</dimen>
+    <dimen name="touch_area_height">160dp</dimen>
 </resources>

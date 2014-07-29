@@ -3,8 +3,8 @@ package com.mohleno.prettyremote.services;
 /**
  * Created by moh on 27.07.14.
  */
-public enum LGCommand {
-    MUTE(26), CHANNEL_UP(27), CHANNEL_DOWN(28);
+public enum LGKey {
+    MUTE(26), CHANNEL_UP(27), CHANNEL_DOWN(28), VOLUME_UP(24), VOLUME_DOWN(25), OK(20);
 
     private final int code;
 
@@ -12,7 +12,7 @@ public enum LGCommand {
         return code;
     }
 
-    LGCommand(int code) {
+    LGKey(int code) {
         this.code = code;
     }
 }

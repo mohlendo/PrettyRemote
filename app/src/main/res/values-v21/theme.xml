@@ -7,6 +7,7 @@
     <color name="theme_default_accent_light">#cfd8dc</color>
     <color name="theme_default_accent_dark">#78909c</color>
     <color name="theme_background">#f2f2f2</color>
+    <color name="theme_dark_background">#2A373f</color>
 
     <declare-styleable name="AppTheme">
         <attr name="actionBarIconColor" format="color" />
@@ -26,14 +27,11 @@
         <item name="android:windowAllowExitTransitionOverlap">true</item>
     </style>
 
-    <style name="FullscreenTheme" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-    </style>
-
-    <style name="FullscreenActionBarStyle" parent="android:Widget.Material.Light.ActionBar">
-        <item name="android:background">?android:colorPrimaryDark</item>
+    <style name="FullscreenTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:colorPrimary">@color/theme_default_primary</item>
+        <item name="android:colorPrimaryDark">@color/theme_default_primary_dark</item>
+        <item name="android:colorAccent">@color/theme_default_accent</item>
+        <item name="android:windowBackground">@color/theme_dark_background</item>
     </style>
 
     <style name="DialogTheme" parent="@android:style/Theme.Material.Light.Dialog.MinWidth">
@@ -48,7 +46,6 @@
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
         <item name="android:windowAllowExitTransitionOverlap">true</item>
     </style>
-
 
     <style name="MainTheme" parent="AppTheme">
         <item name="android:actionBarTheme">@style/MainActionBarThemeOverlay</item>

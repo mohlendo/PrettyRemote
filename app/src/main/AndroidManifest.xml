@@ -22,7 +22,7 @@
             android:name=".RemoteActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_remote"
-            android:theme="@style/MainTheme" >
+            android:theme="@style/FullscreenTheme" >
         </activity>
     </application>
 
