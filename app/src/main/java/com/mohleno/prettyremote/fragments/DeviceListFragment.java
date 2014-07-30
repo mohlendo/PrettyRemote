@@ -4,12 +4,14 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -50,6 +52,7 @@ public class DeviceListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -85,6 +88,19 @@ public class DeviceListFragment extends Fragment {
             Device device = (Device) data.getSerializableExtra(PairingKeyDialogFragment.DEVICE_EXTRA);
             pairWithDevice(device, pairingKey);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuItem menuItem = menu.add(R.string.action_demo);
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                openRemote(new Device("1.2.3.4"));
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public void updateDevices(List<Device> updatedDevices) {
@@ -162,7 +178,7 @@ public class DeviceListFragment extends Fragment {
                 if (session != null) {
                     device.setPairingKey(pairingKey);
                     deviceStorageService.update(device);
-                    openDevice(device);
+                    openRemote(device);
                 } else {
                     Toast.makeText(getActivity(), R.string.toast_cannot_connect, Toast.LENGTH_LONG).show();
                 }
@@ -174,7 +190,7 @@ public class DeviceListFragment extends Fragment {
      * Open the remote control to the given device
      * @param device the device to open
      */
-    private void openDevice(Device device) {
+    private void openRemote(Device device) {
         Intent intent = new Intent();
         intent.putExtra(RemoteActivity.DEVICE_INTENT_KEY, device);
         intent.setClass(getActivity(), RemoteActivity.class);

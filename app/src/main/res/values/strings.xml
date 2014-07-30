@@ -12,8 +12,6 @@
     <string name="tv_pairing_dialog_content">Enter the pairing key that is displayed on the TV to pair with the device.</string>
     <string name="button_cancel">Cancel</string>
     <string name="title_activity_remote">RemoteActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="tv_no_devices_found">LG TV and this device need to be on the same Wi-Fi network.</string>
     <string name="button_wifi_settings">Wifi Settings</string>
     <string name="description_wifi_off_icon">Icon Wifi Off</string>
@@ -26,5 +24,6 @@
     <string name="tv_channel">Channel</string>
     <string name="tv_volume">Volume</string>
     <string name="tv_touch_area">Touch Area</string>
+    <string name="action_demo">Demo Mode</string>
 
 </resources>
