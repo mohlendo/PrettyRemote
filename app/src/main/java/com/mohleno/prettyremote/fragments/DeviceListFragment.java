@@ -326,6 +326,7 @@ public class DeviceListFragment extends Fragment implements LoaderManager.Loader
     private static final class DeviceScanLoader extends AsyncTaskLoader<List<Device>> {
         private final LGConnectService connectService;
         private final DeviceStorageService storageService;
+        private boolean scanned;
 
         public DeviceScanLoader(Context context) {
             super(context);
@@ -335,12 +336,23 @@ public class DeviceListFragment extends Fragment implements LoaderManager.Loader
 
         @Override
         public List<Device> loadInBackground() {
+            scanned = true;
             try {
                 return storageService.merge(connectService.scanForDevices());
             } catch (IOException e) {
+                scanned = false;
                 Log.e(TAG, "Error scanning for devices", e);
             }
             return storageService.load();
+        }
+
+        @Override
+        protected void onStartLoading() {
+            if(scanned) {
+                deliverResult(storageService.load());
+            } else {
+                forceLoad();
+            }
         }
     }
 
