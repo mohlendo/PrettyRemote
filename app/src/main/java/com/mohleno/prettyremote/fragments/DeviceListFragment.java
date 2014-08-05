@@ -1,9 +1,14 @@
 package com.mohleno.prettyremote.fragments;
 
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -28,13 +33,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by moh on 29.07.14.
+ * Fragment showing list of devices and the progress bar when scanning for new devices
  */
-public class DeviceListFragment extends Fragment {
+public class DeviceListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Device>> {
     private static final String TAG = DeviceListFragment.class.getSimpleName();
 
-
     private RecyclerView recyclerView;
+    private View progressView, emptyView;
+    private DeviceListAdapter deviceListAdapter;
+
     private List<Device> devices = new ArrayList<Device>();
 
     private DeviceStorageService deviceStorageService;
@@ -67,19 +74,41 @@ public class DeviceListFragment extends Fragment {
         deviceStorageService = DeviceStorageService.getInstance(getActivity());
         lgConnectService = LGConnectService.getInstance(getActivity());
 
-        recyclerView = (RecyclerView) getView().findViewById(R.id.rv_device_list);
+        View view = getView();
+        if (view == null) {
+            return;
+        }
+
+        progressView = view.findViewById(R.id.vg_progress_view);
+        progressView.setVisibility(View.VISIBLE);
+
+        emptyView = view.findViewById(R.id.vg_no_devices_found);
+        emptyView.setVisibility(View.GONE);
+
+        view.findViewById(R.id.button_wifi_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+            }
+        });
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.rv_device_list);
+        recyclerView.setVisibility(View.GONE);
         recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        recyclerView.setAdapter(new DeviceListAdapter(devices, LayoutInflater.from(getActivity()), new View.OnClickListener() {
+        deviceListAdapter = new DeviceListAdapter(devices, LayoutInflater.from(getActivity()), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int itemPosition = recyclerView.getChildPosition(view);
                 connectToDevice(devices.get(itemPosition));
             }
-        }));    }
+        });
+        recyclerView.setAdapter(deviceListAdapter);
+        getLoaderManager().initLoader(0, null, this);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -92,27 +121,57 @@ public class DeviceListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        MenuItem menuItem = menu.add(R.string.action_demo);
-        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                openRemote(new Device("1.2.3.4"));
-                return true;
-            }
-        });
+        inflater.inflate(R.menu.devices, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public void updateDevices(List<Device> updatedDevices) {
-        devices.clear();
-        devices.addAll(updatedDevices);
-        if (recyclerView != null) {
-            recyclerView.getAdapter().notifyDataSetChanged();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_refresh:
+                getLoaderManager().getLoader(0).forceLoad();
+                return true;
+            case R.id.action_demo:
+                openRemote(new Device("1.2.3.4"));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public Loader<List<Device>> onCreateLoader(int i, Bundle bundle) {
+        return new DeviceScanLoader(getActivity());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Device>> loader, List<Device> data) {
+        devices.clear();
+        devices.addAll(data);
+        deviceListAdapter.notifyDataSetChanged();
+
+        progressView.setVisibility(View.GONE);
+        if (devices.isEmpty()) {
+            getActivity().setTitle(R.string.title_no_devices_found);
+            emptyView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        } else {
+            getActivity().setTitle(R.string.title_connect_device);
+            emptyView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Device>> objectLoader) {
+        devices.clear();
+        deviceListAdapter.notifyDataSetChanged();
     }
 
     /**
      * Connects to the given device. Either requests pairing key or, if key is present, just connects
+     *
      * @param device the device to connect with
      */
     private void connectToDevice(Device device) {
@@ -145,7 +204,7 @@ public class DeviceListFragment extends Fragment {
 
             @Override
             protected void onPostExecute(Boolean result) {
-                if(result) {
+                if (result) {
                     openPairingKeyDialog(device);
                 } else {
                     Toast.makeText(getActivity(), R.string.toast_cannot_request_pairing_key, Toast.LENGTH_SHORT).show();
@@ -188,6 +247,7 @@ public class DeviceListFragment extends Fragment {
 
     /**
      * Open the remote control to the given device
+     *
      * @param device the device to open
      */
     private void openRemote(Device device) {
@@ -199,6 +259,7 @@ public class DeviceListFragment extends Fragment {
 
     /**
      * Open the pairing dialog for the given device
+     *
      * @param device the device to pair with
      */
     private void openPairingKeyDialog(Device device) {
@@ -207,7 +268,10 @@ public class DeviceListFragment extends Fragment {
         fragment.show(getFragmentManager(), "PAIRING_KEY_DIALOG");
     }
 
-    private static class DeviceListAdapter extends RecyclerView.Adapter {
+    /**
+     * Device List Adapter
+     */
+    private final static class DeviceListAdapter extends RecyclerView.Adapter {
         private final List<Device> devices;
         private final LayoutInflater inflater;
         private final View.OnClickListener onClickListener;
@@ -255,4 +319,29 @@ public class DeviceListFragment extends Fragment {
             deviceIp.setText(device.getIP());
         }
     }
+
+    /**
+     * Device scan task loader
+     */
+    private static final class DeviceScanLoader extends AsyncTaskLoader<List<Device>> {
+        private final LGConnectService connectService;
+        private final DeviceStorageService storageService;
+
+        public DeviceScanLoader(Context context) {
+            super(context);
+            this.storageService = DeviceStorageService.getInstance(context);
+            this.connectService = LGConnectService.getInstance(context);
+        }
+
+        @Override
+        public List<Device> loadInBackground() {
+            try {
+                return storageService.merge(connectService.scanForDevices());
+            } catch (IOException e) {
+                Log.e(TAG, "Error scanning for devices", e);
+            }
+            return storageService.load();
+        }
+    }
+
 }

@@ -4,6 +4,10 @@
     <item android:id="@+id/action_refresh"
         android:title="@string/action_refresh"
         android:icon="@drawable/ic_refresh"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom"
+        />
+    <item android:id="@+id/action_demo"
+        android:title="@string/action_demo"
+        android:showAsAction="never"
         />
 </menu>

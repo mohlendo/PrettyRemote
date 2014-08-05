@@ -219,6 +219,12 @@ public class RemoteActivity extends Activity {
         delayedHide(100);
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        delayedHide(100);
+    }
+
     Handler mHideHandler = new Handler();
     Runnable mHideRunnable = new Runnable() {
         @Override

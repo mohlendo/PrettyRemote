@@ -1,11 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.mohleno.prettyremote.fragments.DeviceListFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_device_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/vg_progress_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_scanning"
+            style="@style/DeviceScanText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_scanning_devices" />
+
+        <ProgressBar
+            style="@style/DeviceScanProgressBar"
+            android:indeterminate="true"
+            android:layout_marginTop="@dimen/item_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/vg_no_devices_found"
+        style="@style/NoDevicesFound">
+
+        <TextView
+            style="@style/NoWifiText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/tv_no_devices_found" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="32dp"
+            android:contentDescription="@string/description_wifi_off_icon"
+            android:src="@drawable/ic_wifi_off" />
+
+        <Button
+            android:id="@+id/button_wifi_settings"
+            style="@style/WifiSettingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="32dp"
+            android:text="@string/button_wifi_settings" />
+    </LinearLayout>
 </FrameLayout>

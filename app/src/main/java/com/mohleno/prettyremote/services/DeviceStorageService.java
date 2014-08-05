@@ -73,12 +73,7 @@ public class DeviceStorageService {
         }
 
         // re-sort it
-        Collections.sort(devices, new Comparator<Device>() {
-            @Override
-            public int compare(Device device1, Device device2) {
-                return device1.getName().compareTo(device2.getName());
-            }
-        });
+        Collections.sort(devices, new DeviceComparator());
 
         // and finally save it
         save(devices);
@@ -94,6 +89,13 @@ public class DeviceStorageService {
             return new Gson().fromJson(sharedPreferences.getString(DEVICE_LIST_KEY, ""), listType);
         } else {
             return new ArrayList<Device>();
+        }
+    }
+
+    private static final class DeviceComparator implements Comparator<Device> {
+        @Override
+        public int compare(Device device1, Device device2) {
+            return device1.getName().compareTo(device2.getName());
         }
     }
 }
